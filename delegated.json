@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.35.1.17967",
+      "templateHash": "10475956521698728785"
+    }
+  },
+  "parameters": {
+    "spObjectId": {
+      "type": "string",
+      "defaultValue": "cd5b78b3-4cb1-443b-9919-85acb408fc5e"
+    },
+    "managedByTenantId": {
+      "type": "string",
+      "defaultValue": "29d6890b-18f0-43c0-9d40-547b4d59e95a"
+    },
+    "registrationName": {
+      "type": "string",
+      "defaultValue": "Provider‑Contributor"
+    }
+  },
+  "variables": {
+    "definitionGuid": "[guid(subscription().id, parameters('registrationName'))]",
+    "assignmentGuid": "[guid(subscription().id, format('{0}-assign', parameters('registrationName')))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedServices/registrationDefinitions",
+      "apiVersion": "2022-10-01-preview",
+      "name": "[variables('definitionGuid')]",
+      "properties": {
+        "registrationDefinitionName": "[parameters('registrationName')]",
+        "managedByTenantId": "[parameters('managedByTenantId')]",
+        "authorizations": [
+          {
+            "principalId": "[parameters('spObjectId')]",
+            "principalIdDisplayName": "Provider service principal",
+            "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.ManagedServices/registrationAssignments",
+      "apiVersion": "2022-10-01-preview",
+      "name": "[variables('assignmentGuid')]",
+      "properties": {
+        "registrationDefinitionId": "[subscriptionResourceId('Microsoft.ManagedServices/registrationDefinitions', variables('definitionGuid'))]"
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.ManagedServices/registrationDefinitions', variables('definitionGuid'))]"
+      ]
+    }
+  ]
+}
