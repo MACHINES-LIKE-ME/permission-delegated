@@ -5,21 +5,37 @@
     "_generator": {
       "name": "bicep",
       "version": "0.35.1.17967",
-      "templateHash": "10475956521698728785"
+      "templateHash": "15522518122540255217"
     }
   },
   "parameters": {
     "spObjectId": {
       "type": "string",
-      "defaultValue": "cd5b78b3-4cb1-443b-9919-85acb408fc5e"
+      "defaultValue": "cd5b78b3-4cb1-443b-9919-85acb408fc5e",
+      "metadata": {
+        "description": "Object ID of the service principal in the managing tenant"
+      }
     },
     "managedByTenantId": {
       "type": "string",
-      "defaultValue": "29d6890b-18f0-43c0-9d40-547b4d59e95a"
+      "defaultValue": "29d6890b-18f0-43c0-9d40-547b4d59e95a",
+      "metadata": {
+        "description": "Tenant ID of the managing tenant"
+      }
     },
     "registrationName": {
       "type": "string",
-      "defaultValue": "Provider‑Contributor"
+      "defaultValue": "Provider‑Contributor",
+      "metadata": {
+        "description": "Display name customers will see"
+      }
+    },
+    "registrationDescription": {
+      "type": "string",
+      "defaultValue": "Delegates the Contributor role to the provider service principal",
+      "metadata": {
+        "description": "Friendly description (visible in the customer portal)"
+      }
     }
   },
   "variables": {
@@ -29,10 +45,11 @@
   "resources": [
     {
       "type": "Microsoft.ManagedServices/registrationDefinitions",
-      "apiVersion": "2022-10-01-preview",
+      "apiVersion": "2022-10-01",
       "name": "[variables('definitionGuid')]",
       "properties": {
         "registrationDefinitionName": "[parameters('registrationName')]",
+        "description": "[parameters('registrationDescription')]",
         "managedByTenantId": "[parameters('managedByTenantId')]",
         "authorizations": [
           {
@@ -45,7 +62,7 @@
     },
     {
       "type": "Microsoft.ManagedServices/registrationAssignments",
-      "apiVersion": "2022-10-01-preview",
+      "apiVersion": "2022-10-01",
       "name": "[variables('assignmentGuid')]",
       "properties": {
         "registrationDefinitionId": "[subscriptionResourceId('Microsoft.ManagedServices/registrationDefinitions', variables('definitionGuid'))]"
